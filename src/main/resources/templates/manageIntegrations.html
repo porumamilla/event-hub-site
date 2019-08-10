@@ -1,0 +1,41 @@
+<br>
+<br>
+
+<br>
+<div class="container">
+	<div class="row">
+		<div class="col-sm-6">
+			<div class="card">
+				<div class="card-body">
+					<h5 class="card-title">Sources</h5>
+					<div class="custom-control custom-radio"
+						th:each="source : ${sources}">
+						<input type="radio" id="customRadio1" name="customRadio"
+							class="custom-control-input"> <label
+							class="custom-control-label" for="customRadio1"
+							th:text="${source.name}"></label>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6">
+			<div class="card">
+				<div class="card-body">
+					<h5 class="card-title">Targets</h5>
+					<div class="custom-control custom-checkbox"
+						th:each="target : ${targets}">
+						<input type="checkbox" class="custom-control-input"
+							id="customCheck1"> <label class="custom-control-label"
+							for="customCheck1" th:text="${target.name}"></label>
+					</div>
+
+					
+				</div>
+			</div>
+		</div>
+	</div>
+	<div>
+		<a href="#" class="btn btn-success">Apply Changes</a>
+	</div>
+</div>

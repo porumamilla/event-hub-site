@@ -1,0 +1,60 @@
+<div class="card text-left">
+	<div class="card-header">
+		<ul class="nav nav-pills card-header-pills">
+			<li class="nav-item"><a id="definitionsId" class="nav-link active" href="javascript:showDefinitions()">Manage Definitions</a></li>
+			<li class="nav-item"><a id="eventsId" class="nav-link" href="javascript:showEventHistory()">Events</a>
+			</li>
+			<li class="nav-item"><a id="testId" class="nav-link" href="javascript:showEventTester()">Test</a></li>
+		</ul>
+	</div>
+	<div id="cardContent" class="card-body">
+		
+	</div>
+</div>
+<script src="/js/dashboard.js"></script>
+
+<script type="text/javascript">
+	function showDefinitions() {
+		
+		$('#cardContent').html("<font color='green'>Loading.......</font>");
+		$.get('/definitions', function(data) {
+			  $('#cardContent').html(data);
+			  $('#definitionsId').removeClass();
+			  $('#eventsId').removeClass();
+			  $('#testId').removeClass();
+			  $('#definitionsId').addClass('nav-link active');
+			  $('#eventsId').addClass('nav-link');
+			  $('#testId').addClass('nav-link');
+		});
+	}
+	
+	function showEventHistory() {
+		
+		$('#cardContent').html("<font color='green'>Loading.......</font>");
+		$.get('/eventHistory', function(data) {
+			  $('#cardContent').html(data);
+			  $('#definitionsId').removeClass();
+			  $('#eventsId').removeClass();
+			  $('#testId').removeClass();
+			  $('#definitionsId').addClass('nav-link');
+			  $('#eventsId').addClass('nav-link active');
+			  $('#testId').addClass('nav-link');
+			  
+		});
+	}
+	function showEventTester() {
+		
+		$('#cardContent').html("<font color='green'>Loading.......</font>");
+		$.get('/eventTester', function(data) {
+			  $('#cardContent').html(data);
+			  $('#definitionsId').removeClass();
+			  $('#eventsId').removeClass();
+			  $('#testId').removeClass();
+			  $('#definitionsId').addClass('nav-link');
+			  $('#eventsId').addClass('nav-link');
+			  $('#testId').addClass('nav-link active');
+			  
+		});
+	}
+	showDefinitions();
+</script>

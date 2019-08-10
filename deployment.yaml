@@ -19,3 +19,4 @@ spec:
       containers:
       - name: event-hub-site
         image: "gcr.io/event-hub-249001/event-hub-site:0.0.1-SNAPSHOT"
+        imagePullPolicy: "Always"

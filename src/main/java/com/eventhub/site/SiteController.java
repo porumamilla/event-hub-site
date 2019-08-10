@@ -33,9 +33,9 @@ import com.eventhub.site.model.User;
 @SessionAttributes("user")
 public class SiteController {
 
-	private String daoApiEndpoint = "http://event-hub-dao-service:8080";
-	private String schemaApiEndpoint = "http://event-hub-schema-service:8080";
-	private String publisherApiEndpoint = "http://event-hub-publisher-service:8080";
+	private String daoApiEndpoint = "http://event-hub-dao:8080";
+	private String schemaApiEndpoint = "http://event-hub-schema:8080";
+	private String publisherApiEndpoint = "http://event-hub-publisher:8080";
 	
 	@Autowired
 	RestTemplate restTemplate;

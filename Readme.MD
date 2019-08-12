@@ -1,7 +1,7 @@
 # Event Hub Site
 This is a event hub web application that lets the organization users to log in and manage the events, sources, targets, integrations and consumer profiles.
 
-![alt text](Screen Shot 2019-08-09 at 6.54.21 PM.png)
+![alt text](Architecture.png)
 ## Building docker
  mvn compile jib:dockerBuild
 

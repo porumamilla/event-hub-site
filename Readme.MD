@@ -1,5 +1,5 @@
 # Event Hub Site
-This is a event hub web application(i.e., Event Hub Site in the architure diagrom) that lets the organization users to log in and manage the events, sources, targets, integrations and consumer profiles.
+This is a event hub web application(i.e., Event Hub Site in the architure diagrom) that lets the organization users to log in and manage the events, sources, targets, integrations and consumer profiles. This service is developed using SpringBoot MVC, Bootstrap CSS and Spring Thymeleaf.
 
 ![alt text](Architecture.png)
 ## Building docker

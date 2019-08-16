@@ -17,6 +17,7 @@
 							th:text="${source.name}"> -->
 						<input type="radio" th:field="*{radioButtonSelectedValue}" th:value="${source.id}"
 							class="custom-control-input"> <label
+							th:for="${#ids.prev('radioButtonSelectedValue')}"
 							class="custom-control-label" 
 							th:text="${source.name}"></label>
 					</div>
@@ -36,6 +37,7 @@
 							 -->
 						<input type="checkbox" class="custom-control-input" th:field="*{multiCheckboxSelectedValues}"
 							th:value="${target.id}"> <label class="custom-control-label"
+							th:for="${#ids.prev('multiCheckboxSelectedValues')}"
 							th:text="${target.name}"></label>
 					</div>
 

@@ -3,6 +3,7 @@
 
 <br>
 <div class="container">
+	<form action="#" th:action="@{/integrationsForm}" th:object="${command}">
 	<div class="row">
 		<div class="col-sm-6">
 			<div class="card">
@@ -14,7 +15,7 @@
 							class="custom-control-input"> <label
 							class="custom-control-label" for="customRadio1"
 							th:text="${source.name}"> -->
-						<input type="radio" th:value="${source.id}"
+						<input type="radio" th:field="*{radioButtonSelectedValue}" th:value="${source.id}"
 							class="custom-control-input"> <label
 							class="custom-control-label" 
 							th:text="${source.name}"></label>
@@ -33,7 +34,7 @@
 							id="customCheck1"> <label class="custom-control-label"
 							for="customCheck1" th:text="${target.name}"></label>
 							 -->
-						<input type="checkbox" class="custom-control-input"
+						<input type="checkbox" class="custom-control-input" th:field="*{multiCheckboxSelectedValues}"
 							th:value="${target.id}"> <label class="custom-control-label"
 							th:text="${target.name}"></label>
 					</div>
@@ -46,4 +47,5 @@
 	<div>
 		<a href="#" class="btn btn-success">Apply Changes</a>
 	</div>
+	</form>
 </div>

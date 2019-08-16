@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.eventhub.site.form.IntegrationsForm;
 import com.eventhub.site.model.Consumer;
 import com.eventhub.site.model.EventDefinition;
 import com.eventhub.site.model.Source;
@@ -172,7 +173,7 @@ public class SiteController {
 				new ParameterizedTypeReference<List<Target>>() {
 				}).getBody();
 		model.addAttribute("targets", targets);
-
+		model.addAttribute("integrationsForm", new IntegrationsForm());
 		return "manageIntegrations";
 	}
 

@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.eventhub.site.config.ApiEndPointUri;
 import com.eventhub.site.form.IntegrationsForm;
 import com.eventhub.site.model.Consumer;
 import com.eventhub.site.model.EventDefinition;
@@ -34,13 +35,13 @@ import com.eventhub.site.model.User;
 @SessionAttributes("user")
 public class SiteController {
 
-	private String daoApiEndpoint = "http://event-hub-dao:8080";
-	private String schemaApiEndpoint = "http://event-hub-schema:8080";
-	private String publisherApiEndpoint = "http://event-hub-publisher:8080";
-
 	@Autowired
 	RestTemplate restTemplate;
 
+	@Autowired
+	ApiEndPointUri apiEndPointUri;
+	
+	
 	@GetMapping(value = "/events")
 	public String events() {
 		return "events";
@@ -57,13 +58,13 @@ public class SiteController {
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("manageDefinitions");
-
-		List<EventDefinition> definitions = restTemplate.exchange(daoApiEndpoint + "/organization/eventDefinitions?orgId=" +
+		
+		List<EventDefinition> definitions = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/organization/eventDefinitions?orgId=" +
 				user.getOrgId() + "&workspace=" + user.getDefaultWorkspace(), HttpMethod.GET, null,
 				new ParameterizedTypeReference<List<EventDefinition>>() {
 				}).getBody();
 
-		List<Source> sources = restTemplate.exchange(daoApiEndpoint + "/organization/sources?orgId=" + user.getOrgId() +
+		List<Source> sources = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/organization/sources?orgId=" + user.getOrgId() +
 				"&workspace=" + user.getDefaultWorkspace(), HttpMethod.GET, null,
 				new ParameterizedTypeReference<List<Source>>() {
 				}).getBody();
@@ -89,12 +90,12 @@ public class SiteController {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("editDefinition");
 
-		EventDefinition definition = restTemplate.exchange(daoApiEndpoint + "eventDefinition?id=" +
+		EventDefinition definition = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "eventDefinition?id=" +
 				id, HttpMethod.GET, null,
 				new ParameterizedTypeReference<EventDefinition>() {
 				}).getBody();
 
-		List<Source> sources = restTemplate.exchange(daoApiEndpoint + "/organization/sources?orgId=" + user.getOrgId() +
+		List<Source> sources = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/organization/sources?orgId=" + user.getOrgId() +
 				"&workspace=" + user.getDefaultWorkspace(), HttpMethod.GET, null,
 				new ParameterizedTypeReference<List<Source>>() {
 				}).getBody();
@@ -116,7 +117,7 @@ public class SiteController {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
-		List<Source> sources = restTemplate.exchange(daoApiEndpoint + "/organization/sources?orgId=" + user.getOrgId() +
+		List<Source> sources = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/organization/sources?orgId=" + user.getOrgId() +
 				"&workspace=" + user.getDefaultWorkspace(), HttpMethod.GET, null,
 				new ParameterizedTypeReference<List<Source>>() {
 				}).getBody();
@@ -135,12 +136,12 @@ public class SiteController {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
-		List<Target> targets = restTemplate.exchange(daoApiEndpoint + "/targets", HttpMethod.GET, null,
+		List<Target> targets = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/targets", HttpMethod.GET, null,
 				new ParameterizedTypeReference<List<Target>>() {
 				}).getBody();
 		model.addAttribute("targets", targets);
 
-		List<Target> orgTargets = restTemplate.exchange(daoApiEndpoint + "/organization/targets?orgId=dzFyTqq4dT7YIai8mogz", HttpMethod.GET, null,
+		List<Target> orgTargets = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/organization/targets?orgId=dzFyTqq4dT7YIai8mogz", HttpMethod.GET, null,
 				new ParameterizedTypeReference<List<Target>>() {
 				}).getBody();
 
@@ -163,13 +164,13 @@ public class SiteController {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
-		List<Source> sources = restTemplate.exchange(daoApiEndpoint + "/organization/sources?orgId=" + user.getOrgId() +
+		List<Source> sources = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/organization/sources?orgId=" + user.getOrgId() +
 				"&workspace=" + user.getDefaultWorkspace(), HttpMethod.GET, null,
 				new ParameterizedTypeReference<List<Source>>() {
 				}).getBody();
 		model.addAttribute("sources", sources);
 
-		List<Target> targets = restTemplate.exchange(daoApiEndpoint + "/targets", HttpMethod.GET, null,
+		List<Target> targets = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/targets", HttpMethod.GET, null,
 				new ParameterizedTypeReference<List<Target>>() {
 				}).getBody();
 		model.addAttribute("targets", targets);
@@ -182,7 +183,7 @@ public class SiteController {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
-		List<Consumer> consumers = restTemplate.exchange(daoApiEndpoint + "/organization/consumers?orgId=" +
+		List<Consumer> consumers = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/organization/consumers?orgId=" +
 				user.getOrgId() + "&workspace=" + user.getDefaultWorkspace(), HttpMethod.GET, null,
 				new ParameterizedTypeReference<List<Consumer>>() {
 				}).getBody();
@@ -208,7 +209,7 @@ public class SiteController {
 
 	private User getUserDetails(String email, String name) {
 
-		User userDetails = restTemplate.exchange(daoApiEndpoint + "/organization/user?email=" + email, HttpMethod.GET, null,
+		User userDetails = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/organization/user?email=" + email, HttpMethod.GET, null,
 				new ParameterizedTypeReference<User>() {
 				}).getBody();
 
@@ -223,12 +224,12 @@ public class SiteController {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("eventTester");
 
-		List<EventDefinition> definitions = restTemplate.exchange(daoApiEndpoint + "/organization/eventDefinitions?orgId=" +
+		List<EventDefinition> definitions = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/organization/eventDefinitions?orgId=" +
 				user.getOrgId() + "&workspace=" + user.getDefaultWorkspace(), HttpMethod.GET, null,
 				new ParameterizedTypeReference<List<EventDefinition>>() {
 				}).getBody();
 
-		List<Source> sources = restTemplate.exchange(daoApiEndpoint + "/organization/sources?orgId=" + user.getOrgId() +
+		List<Source> sources = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/organization/sources?orgId=" + user.getOrgId() +
 				"&workspace=" + user.getDefaultWorkspace(), HttpMethod.GET, null,
 				new ParameterizedTypeReference<List<Source>>() {
 				}).getBody();
@@ -253,7 +254,7 @@ public class SiteController {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
-		EventDefinition definition = restTemplate.exchange(daoApiEndpoint + "/eventDefinition?id=" +
+		EventDefinition definition = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/eventDefinition?id=" +
 				eventId, HttpMethod.GET, null,
 				new ParameterizedTypeReference<EventDefinition>() {
 				}).getBody();
@@ -267,7 +268,7 @@ public class SiteController {
 
 		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers1);
 
-		ResponseEntity<String> response = restTemplate.postForEntity( schemaApiEndpoint + "/validate", request , String.class );
+		ResponseEntity<String> response = restTemplate.postForEntity( apiEndPointUri.getSchemaApiEndpoint() + "/validate", request , String.class );
 
 		if (!response.getStatusCode().equals(HttpStatus.OK)) {
 			throw new RuntimeException(response.getBody());
@@ -285,7 +286,7 @@ public class SiteController {
 		System.out.println("jsonData == " + jsonData);
 		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers1);
 
-		ResponseEntity<String> response = restTemplate.postForEntity( publisherApiEndpoint + "/publish", request , String.class );
+		ResponseEntity<String> response = restTemplate.postForEntity( apiEndPointUri.getPublisherApiEndpoint() + "/publish", request , String.class );
 
 		if (!response.getStatusCode().equals(HttpStatus.OK)) {
 			throw new RuntimeException(response.getBody());

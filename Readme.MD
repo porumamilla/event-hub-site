@@ -2,6 +2,10 @@
 This is a event hub web application(i.e., EventHubSite in the architure diagram) that lets the organization users to log in and manage the events, sources, targets, integrations and consumer profiles. This service is developed using SpringBoot MVC, Bootstrap CSS and Spring Thymeleaf.
 
 ![alt text](Architecture.png)
+
+## Running in local using Maven
+mvn spring-boot:run -Dspring-boot.run.arguments=--spring.profiles.active=local
+
 ## Building docker
  mvn compile jib:dockerBuild
 

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="google-signin-client_id" content="11573457473-0edham2mh2r4e96hodjauolnhhcibuvm.apps.googleusercontent.com">
+<style type="text/css">
+	.login-form {
+		width: 340px;
+    	margin: 30px auto;
+	}
+    .login-form form {
+    	margin-bottom: 15px;
+        background: #f7f7f7;
+        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+        padding: 30px;
+    }
+    .login-form h2 {
+        margin: 0 0 15px;
+    }
+    .login-form .hint-text {
+		color: #777;
+		padding-bottom: 15px;
+		text-align: center;
+    }
+    .form-control, .btn {
+        min-height: 38px;
+        border-radius: 2px;
+    }
+    .login-btn {        
+        font-size: 15px;
+        font-weight: bold;
+    }
+    .or-seperator {
+        margin: 20px 0 10px;
+        text-align: center;
+        border-top: 1px solid #ccc;
+    }
+    .or-seperator i {
+        padding: 0 10px;
+        background: #f7f7f7;
+        position: relative;
+        top: -11px;
+        z-index: 1;
+    }
+    .social-btn .btn {
+        margin: 10px 0;
+        font-size: 15px;
+        text-align: left; 
+        line-height: 24px;       
+    }
+	.social-btn .btn i {
+		float: left;
+		margin: 4px 15px  0 5px;
+        min-width: 15px;
+	}
+	.input-group-addon .fa{
+		font-size: 18px;
+	}
+</style>
+<th:block th:include="~{fragments/general :: headerfiles}">
+</th:block>
+</head>
+<body>
+<th:block th:include="~{fragments/general :: siteNavBar}">
+	</th:block>
+	<br/><br/><br/>
+<div class="login-form">
+    <form action="/examples/actions/confirmation.php" method="post">
+        <h2 class="text-center">Sign in</h2>
+        <div id="my-signin2" class="g-signin2" data-onsuccess="onSignIn"></div>		
+        <!-- <div class="text-center social-btn">
+			<a href="#" class="btn btn-primary btn-block"><i class="fa fa-google"></i> Sign in with <b>Google</b></a>
+        </div> -->
+    </form>
+</div>
+ <form id="loginForm" action="/login"  method="post">
+    	<input type="hidden" id="email" name="email" />
+        <input type="hidden" id="name" name="name" />
+    </form>
+
+
+    <script>
+    function onSignIn(googleUser) {
+	  var profile = googleUser.getBasicProfile();
+	  console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+	  console.log('Name: ' + profile.getName());
+	  console.log('Image URL: ' + profile.getImageUrl());
+	  console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+	  $("#email").val(profile.getEmail())
+	  $("#name").val(profile.getName())
+	  $("#loginForm").submit();
+	  //login();
+	}
+    function login() {
+		$.post("/login", $( "#loginForm" ).serialize(),
+	    function(data,status){
+	      if (status == 'success') {
+	    	  $("#contentArea").html(data)
+	      }
+	    }).fail(function(response) {
+	    	$("#contentArea").html('<font color="green">Error please try again after some time' + '</font>')
+	    });
+	}
+    
+    function renderButton() {
+        gapi.signin2.render('my-signin2', {
+          'width': 240,
+          'height': 50,
+          'longtitle': true,
+          'theme': 'dark'
+        });
+      }
+    
+    </script>
+    <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+	<div th:replace="fragments/general :: jquery"></div>
+	<div th:replace="fragments/general :: bootsrtapjs"></div>
+</body>
+</html>

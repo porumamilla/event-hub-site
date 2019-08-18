@@ -1,6 +1,7 @@
 package com.eventhub.site;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.eventhub.site.config.ApiEndPointUri;
 import com.eventhub.site.form.IntegrationsForm;
+import com.eventhub.site.form.RegistrationForm;
 import com.eventhub.site.model.Consumer;
 import com.eventhub.site.model.EventDefinition;
+import com.eventhub.site.model.Organization;
 import com.eventhub.site.model.Source;
 import com.eventhub.site.model.Target;
 import com.eventhub.site.model.User;
@@ -42,6 +45,10 @@ public class SiteController {
 	ApiEndPointUri apiEndPointUri;
 	
 	
+	@GetMapping(value = "/index")
+	public String index() {
+		return "index";
+	}
 	@GetMapping(value = "/events")
 	public String events() {
 		return "events";
@@ -191,29 +198,61 @@ public class SiteController {
 
 		return "manageConsumers";
 	}
-
-	@GetMapping(value = "/registration")
-	public String registration(Model model) {
-		return "registration";
+	
+	@GetMapping(value="/showLogin")
+	public String showLogin() {
+		return "login";
 	}
-
+	
 	@PostMapping(value = "/login")
 	public ModelAndView login(@RequestParam(name="email") String email, @RequestParam(name="name") String name) {
 		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("dashboard");
-
-        modelAndView.addObject("user", getUserDetails(email, name));
-
+		
+		User user = getUserDetails(email, name);
+        modelAndView.addObject("user", user);
+        if (user != null && user.getId() != null) {
+        	modelAndView.setViewName("dashboard");
+        } else {
+        	RegistrationForm registrationForm = new RegistrationForm();
+        	registrationForm.setEmail(email);
+        	registrationForm.setName(name);
+        	modelAndView.addObject("registrationForm", registrationForm);
+        	modelAndView.setViewName("registration");
+        }
+		return modelAndView;
+	}
+	
+	@PostMapping(value = "/register")
+	public ModelAndView register(@ModelAttribute RegistrationForm registrationForm) {
+		ModelAndView modelAndView = new ModelAndView();
+		
+		//User user = getUserDetails(registrationForm.getEmail(), registrationForm.getName());
+		
+        //modelAndView.addObject("user", user);
+        ResponseEntity<String> orgResponse = restTemplate.postForEntity( apiEndPointUri.getDaoApiEndpoint() + "/organization", registrationForm.getOrg() , String.class );
+        String orgId = orgResponse.getBody();
+        User user = registrationForm.getUser(orgId);
+        ResponseEntity<String> userResponse = restTemplate.postForEntity( apiEndPointUri.getDaoApiEndpoint() + "/user", user , String.class );
+        String userId = userResponse.getBody();
+        user.setId(userId);
+        modelAndView.addObject("user", user);
+        
+        modelAndView.setViewName("dashboard");
 		return modelAndView;
 	}
 
 	private User getUserDetails(String email, String name) {
-
-		User userDetails = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/organization/user?email=" + email, HttpMethod.GET, null,
+		User userDetails = new User();
+	
+		try {
+			userDetails = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/organization/user?email=" + email, HttpMethod.GET, null,
 				new ParameterizedTypeReference<User>() {
 				}).getBody();
-
-		userDetails.setName(name);
+			userDetails.setName(name);
+		} catch(Exception error) {
+			error.printStackTrace();
+		}
+		
 		return userDetails;
 	}
 

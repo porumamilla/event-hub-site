@@ -260,7 +260,7 @@ $(document).ready(function(){
 					</div>
 					<div class="col-sm-6">
 						<a href="javascript:showAddDialog()" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Add New Definition</span></a>
-						<a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Delete</span></a>						
+						<a href="#deleteModal" class="btn btn-danger" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Delete</span></a>						
 					</div>
                 </div>
             </div>
@@ -282,7 +282,7 @@ $(document).ready(function(){
                     <tr th:each="definition : ${definitions}">
 						<td>
 							<span class="custom-checkbox">
-								<input type="checkbox" id="checkbox1" name="options[]" value="1">
+								<input type="checkbox" id="checkbox1" name="options[]" th:value="${definition.id}">
 								<label for="checkbox1"></label>
 							</span>
 						</td>
@@ -290,7 +290,7 @@ $(document).ready(function(){
 						<td th:text="${definition.sourceName}"></td>
                         <td>
                             <a th:href="'javascript:showEditDialog(\'' + ${definition.id} + '\');'" class="edit"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-                            <a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+                            <a href="#deleteModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
                         </td>
                     </tr>
                    
@@ -312,10 +312,10 @@ $(document).ready(function(){
              -->
         </div>
 	<!-- Edit Modal HTML -->
-	<div id="addEmployeeModal" class="modal fade" role="dialog">
+	<div id="addModal" class="modal fade" role="dialog">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form>
+				<form id="addDefinitionForm">
 					<div class="modal-header">						
 						<h4 class="modal-title">Add Definition</h4>
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -323,34 +323,34 @@ $(document).ready(function(){
 					<div class="modal-body">					
 						<div class="form-group">
 							<label>Name</label>
-							<input type="text" class="form-control" required>
+							<input type="text" class="form-control" name="eventName">
 						</div>
 						<div class="form-group">
 							<label>Source</label>
-							<select class="form-control">
+							<select class="form-control" name="sourceId">
 					      <option th:each="source : ${sources}" th:value="${source.id}" th:text="${source.name}"></option>
 					    </select>
 						</div>
 						
 						<div class="form-group">
 							<label>Schema</label>
-							<textarea cols="120" rows="25" class="form-control" required></textarea>
+							<textarea name="schema" cols="120" rows="25" class="form-control" required></textarea>
 						</div>
 					</div>
 					<div class="modal-footer">
 						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-						<input type="submit" class="btn btn-success" value="Add">
+						<input type="button" class="btn btn-success" value="Add" onclick="createDefinition()">
 					</div>
 				</form>
 			</div>
 		</div>
 	</div>
 	<!-- Edit Modal HTML -->
-	<div id="editEmployeeModal" class="modal fade">
+	<div id="editModal" class="modal fade">
 		
 	</div>
 	<!-- Delete Modal HTML -->
-	<div id="deleteEmployeeModal" class="modal fade">
+	<div id="deleteModal" class="modal fade">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<form>
@@ -364,28 +364,71 @@ $(document).ready(function(){
 					</div>
 					<div class="modal-footer">
 						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-						<input type="submit" class="btn btn-danger" value="Delete">
+						<input type="button" class="btn btn-danger" value="Delete" onclick="deleteDefinition()">
 					</div>
 				</form>
 			</div>
 		</div>
 	</div>
 	<script type="text/javascript">
+	
+		function createDefinition() {
+			$.post("/createDefinition", $( "#addDefinitionForm" ).serialize(),
+		    function(data,status){
+		      if (status == 'success') {
+		    	  $('#addModal').modal('hide')
+		    	  $('.modal-backdrop').remove();
+		    	  $("#contentArea").html(data)
+		    	  
+		      }
+		    }).fail(function(response) {
+		    	$("#contentArea").html('<font color="green">Error please try again after some time' + '</font>')
+		    });
+		}
+	
+		function updateDefinition() {
+			$.post("/updateDefinition", $( "#updateDefinitionForm" ).serialize(),
+		    function(data,status){
+		      if (status == 'success') {
+		    	  $('#editModal').modal('hide')
+		    	  $('.modal-backdrop').remove();
+		    	  //$("#contentArea").html(data)
+		    	  showDefinitions();
+		      }
+		    }).fail(function(response) {
+		    	$("#contentArea").html('<font color="green">Error please try again after some time' + '</font>')
+		    });
+		}
+		
+		function deleteDefinition() {
+			$.post("/deleteDefinition?id=" + $('#checkbox1:checked').val(), 
+		    function(data,status){
+		      if (status == 'success') {
+		    	  $('#deleteModal').modal('hide')
+		    	  $('.modal-backdrop').remove();
+		    	  $("#contentArea").html(data)
+		    	  //showDefinitions();
+		      }
+		    }).fail(function(response) {
+		    	$("#contentArea").html('<font color="green">Error please try again after some time' + '</font>')
+		    });
+		}
+		
 		function showAddDialog() {
-			$("#addEmployeeModal").modal()
+			$("#addModal").modal()
 		}
 		
 		function prettyPrint() {
-		    var ugly = document.getElementById('schemaTextArea').value;
+		    var ugly = document.getElementById('schema').value;
 		    var obj = JSON.parse(ugly);
 		    var pretty = JSON.stringify(obj, undefined, 4);
-		    document.getElementById('schemaTextArea').value = pretty;
+		    document.getElementById('schema').value = pretty;
 		}
 		
 		function showEditDialog(id) {
 			$.get('/editDefinition?id=' + id, function(data) {
-				  $('#editEmployeeModal').html(data);
-				  $("#editEmployeeModal").modal()
+				  $('#editModal').html(data);
+				  $("#editModal").modal()
 				  prettyPrint();
 			});
 			

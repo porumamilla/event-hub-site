@@ -1,7 +1,6 @@
 package com.eventhub.site;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +29,11 @@ import com.eventhub.site.form.IntegrationsForm;
 import com.eventhub.site.form.RegistrationForm;
 import com.eventhub.site.model.Consumer;
 import com.eventhub.site.model.EventDefinition;
-import com.eventhub.site.model.Organization;
 import com.eventhub.site.model.Source;
+import com.eventhub.site.model.SourceType;
 import com.eventhub.site.model.Target;
 import com.eventhub.site.model.User;
+import com.eventhub.site.model.Workspace;
 @Controller
 @SessionAttributes("user")
 public class SiteController {
@@ -71,7 +71,7 @@ public class SiteController {
 				new ParameterizedTypeReference<List<EventDefinition>>() {
 				}).getBody();
 
-		List<Source> sources = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/organization/sources?orgId=" + user.getOrgId() +
+		List<Source> sources = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/organization/sourceTypes?orgId=" + user.getOrgId() +
 				"&workspace=" + user.getDefaultWorkspace(), HttpMethod.GET, null,
 				new ParameterizedTypeReference<List<Source>>() {
 				}).getBody();
@@ -90,6 +90,22 @@ public class SiteController {
 		return modelAndView;
 	}
 
+	@PostMapping(value = "/createDefinition")
+	public ModelAndView createDefinition(@ModelAttribute("user") User user, @ModelAttribute EventDefinition eventDefinition) {
+		System.out.println("Entered in createDefinition == " + eventDefinition.getEventName());
+		eventDefinition.setOrgId(user.getOrgId());
+		eventDefinition.setWorkspace(user.getDefaultWorkspace());
+		
+		HttpEntity<EventDefinition> requestUpdate = new HttpEntity<>(eventDefinition, null);
+		ResponseEntity<String> response = restTemplate.exchange( apiEndPointUri.getDaoApiEndpoint() + "/organization/eventDefinition", HttpMethod.PUT, requestUpdate , String.class );
+	
+		if (!response.getStatusCode().equals(HttpStatus.OK)) {
+			throw new RuntimeException(response.getBody());
+		}
+
+		return definitions(user);
+	}
+	
 	@GetMapping(value = "/editDefinition")
 	public ModelAndView editDefinition(@ModelAttribute("user") User user, @RequestParam(name="id") String id) {
 		HttpHeaders headers = new HttpHeaders();
@@ -102,7 +118,7 @@ public class SiteController {
 				new ParameterizedTypeReference<EventDefinition>() {
 				}).getBody();
 
-		List<Source> sources = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/organization/sources?orgId=" + user.getOrgId() +
+		List<Source> sources = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/organization/sourceTypes?orgId=" + user.getOrgId() +
 				"&workspace=" + user.getDefaultWorkspace(), HttpMethod.GET, null,
 				new ParameterizedTypeReference<List<Source>>() {
 				}).getBody();
@@ -118,24 +134,107 @@ public class SiteController {
 
 		return modelAndView;
 	}
+	
+	@PostMapping(value = "/updateDefinition")
+	@ResponseStatus(HttpStatus.OK)
+	public void updateDefinition(@ModelAttribute("user") User user, @ModelAttribute EventDefinition eventDefinition) {
+		System.out.println(eventDefinition.getSchema());
+		EventDefinition definitionFromDB = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "eventDefinition?id=" +
+				eventDefinition.getId(), HttpMethod.GET, null,
+				new ParameterizedTypeReference<EventDefinition>() {
+				}).getBody();
+		eventDefinition.setEventName(definitionFromDB.getEventName());
+		eventDefinition.setSourceId(definitionFromDB.getSourceId());
+		eventDefinition.setWorkspace(definitionFromDB.getWorkspace());
+		eventDefinition.setOrgId(user.getOrgId());
+		eventDefinition.setWorkspace(user.getDefaultWorkspace());
+		
+		HttpEntity<EventDefinition> requestUpdate = new HttpEntity<>(eventDefinition, null);
+		ResponseEntity<String> response = restTemplate.exchange( apiEndPointUri.getDaoApiEndpoint() + "/organization/eventDefinition", HttpMethod.POST, requestUpdate , String.class );
+	
+		if (!response.getStatusCode().equals(HttpStatus.OK)) {
+			throw new RuntimeException(response.getBody());
+		}
+
+		//return definitions(user);
+	}
+	
+	@PostMapping(value = "/deleteDefinition")
+	public ModelAndView deleteDefinition(Model model, @ModelAttribute("user") User user, @RequestParam(name="id") String id) {
+		ResponseEntity<String> response = restTemplate.exchange( apiEndPointUri.getDaoApiEndpoint() + "/organization/eventDefinition?id=" + id, HttpMethod.DELETE, null , String.class );
+	
+		if (!response.getStatusCode().equals(HttpStatus.OK)) {
+			throw new RuntimeException(response.getBody());
+		}
+		return definitions(user);
+	}
 
 	@GetMapping(value = "/sources")
 	public String sources(Model model, @ModelAttribute("user") User user) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
-		List<Source> sources = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/organization/sources?orgId=" + user.getOrgId() +
+		List<SourceType> orgSourceTypes = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/organization/sourceTypes?orgId=" + user.getOrgId() +
 				"&workspace=" + user.getDefaultWorkspace(), HttpMethod.GET, null,
-				new ParameterizedTypeReference<List<Source>>() {
+				new ParameterizedTypeReference<List<SourceType>>() {
 				}).getBody();
-		model.addAttribute("sources", sources);
+		model.addAttribute("orgSourceTypes", orgSourceTypes);
 
-		/*List<Source> protocols = restTemplate.exchange("http://localhost:8081/protocols", HttpMethod.GET, null,
-				new ParameterizedTypeReference<List<Source>>() {
+		List<SourceType> sourceTypes = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/sourceTypes", HttpMethod.GET, null,
+				new ParameterizedTypeReference<List<SourceType>>() {
 				}).getBody();
-		model.addAttribute("protocols", protocols);*/
+		model.addAttribute("sourceTypes", sourceTypes);
 
 		return "manageSources";
+	}
+	
+	@GetMapping(value = "/sourceType")
+	public String source(Model model, @ModelAttribute("user") User user, @RequestParam(name="id") String id) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+		List<SourceType> orgSourceTypes = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/organization/sourceTypes?orgId=" + user.getOrgId() +
+				"&workspace=" + user.getDefaultWorkspace(), HttpMethod.GET, null,
+				new ParameterizedTypeReference<List<SourceType>>() {
+				}).getBody();
+		for (SourceType orgSourceType : orgSourceTypes) {
+			if (orgSourceType.getId().equals(id)) {
+				model.addAttribute("orgSourceType", orgSourceType);
+				break;
+			}
+		}
+		
+
+		return "sourceType";
+	}
+	
+	@PostMapping(value = "/createSource")
+	public String createSource(Model model, @ModelAttribute("user") User user, @RequestParam(name="name") String name, @RequestParam(name="type") String type) {
+		SourceType sourceType = new SourceType();
+		sourceType.setName(name);
+		sourceType.setType(type);
+		sourceType.setWorkspace(user.getDefaultWorkspace());
+		HttpEntity<SourceType> requestUpdate = new HttpEntity<>(sourceType, null);
+		
+		ResponseEntity<String> response = restTemplate.exchange( apiEndPointUri.getDaoApiEndpoint() + "/organization/sourceType?orgId=" + user.getOrgId(), HttpMethod.PUT, requestUpdate , String.class );
+	
+		if (!response.getStatusCode().equals(HttpStatus.OK)) {
+			throw new RuntimeException(response.getBody());
+		}
+		return sources(model, user);
+	}
+	
+	@PostMapping(value = "/deleteSource")
+	public String deleteSource(Model model, @ModelAttribute("user") User user, @RequestParam(name="id") String id) {
+		SourceType sourceType = new SourceType();
+		sourceType.setId(id);
+		HttpEntity<SourceType> requestUpdate = new HttpEntity<>(sourceType, null);
+		ResponseEntity<String> response = restTemplate.exchange( apiEndPointUri.getDaoApiEndpoint() + "/organization/sourceType?orgId=" + user.getOrgId(), HttpMethod.DELETE, requestUpdate , String.class );
+	
+		if (!response.getStatusCode().equals(HttpStatus.OK)) {
+			throw new RuntimeException(response.getBody());
+		}
+		return sources(model, user);
 	}
 
 	@GetMapping(value = "/targets")
@@ -202,6 +301,60 @@ public class SiteController {
 	@GetMapping(value="/showLogin")
 	public String showLogin() {
 		return "login";
+	}
+	
+	@GetMapping(value="/manageWorkspaces")
+	public ModelAndView manageWorkspaces(@ModelAttribute("user") User user) {
+		ModelAndView modelAndView = new ModelAndView();
+		System.out.println("User org id == " + user.getOrgId());
+		List<Workspace> workspaces = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/organization/workspaces?orgId=" +
+				user.getOrgId() , HttpMethod.GET, null,
+				new ParameterizedTypeReference<List<Workspace>>() {
+				}).getBody();
+		modelAndView.addObject("workspaces", workspaces);
+		modelAndView.setViewName("manageWorkspaces");
+		return modelAndView;
+	}
+	
+	@PostMapping(value = "/createWorkspace")
+	public ModelAndView createWorkspace(@ModelAttribute("user") User user, @RequestParam(name="workspace") String workspace) {
+		Workspace workspaceObj = new Workspace();
+		workspaceObj.setName(workspace);
+		workspaceObj.setOrgId(user.getOrgId());
+		HttpEntity<Workspace> requestUpdate = new HttpEntity<>(workspaceObj, null);
+		ResponseEntity<String> response = restTemplate.exchange( apiEndPointUri.getDaoApiEndpoint() + "/organization/workspace", HttpMethod.PUT, requestUpdate , String.class );
+		user.setDefaultWorkspace(workspace);
+		if (!response.getStatusCode().equals(HttpStatus.OK)) {
+			throw new RuntimeException(response.getBody());
+		}
+		return changeWorkspaceHelper(user, workspace);
+	}
+	
+	@PostMapping(value = "/changeWorkspace")
+	public ModelAndView changeWorkspace(@ModelAttribute("user") User user, @RequestParam(name="workspace") String workspace) {
+		return changeWorkspaceHelper(user, workspace);
+	}
+	
+	private ModelAndView changeWorkspaceHelper(User user, String workspace) {
+		ModelAndView modelAndView = new ModelAndView();
+		
+		HttpHeaders headers1 = new HttpHeaders();
+		headers1.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+		MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
+		map.add("userId",  user.getId());
+		map.add("workspace",  workspace);
+		System.out.println("workspace == " + workspace);
+
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers1);
+
+		ResponseEntity<String> response = restTemplate.postForEntity( apiEndPointUri.getDaoApiEndpoint() + "/user/changeWorkspace", request , String.class );
+		user.setDefaultWorkspace(workspace);
+		if (!response.getStatusCode().equals(HttpStatus.OK)) {
+			throw new RuntimeException(response.getBody());
+		}
+		modelAndView.setViewName("dashboard");
+		return modelAndView;
 	}
 	
 	@PostMapping(value = "/login")
@@ -318,14 +471,9 @@ public class SiteController {
 	@ResponseStatus(HttpStatus.OK)
 	public void publishEvent(@RequestParam(name="jsonData") String jsonData) {
 		HttpHeaders headers1 = new HttpHeaders();
-		//headers1.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-		MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
-		map.add("jsonData",  jsonData);
-		System.out.println("jsonData == " + jsonData);
-		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers1);
-
-		ResponseEntity<String> response = restTemplate.postForEntity( apiEndPointUri.getPublisherApiEndpoint() + "/publish", request , String.class );
+		headers1.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<String> httpEntity = new HttpEntity<String>(jsonData, headers1);
+		ResponseEntity<String> response = restTemplate.postForEntity( apiEndPointUri.getPublisherApiEndpoint() + "/publish", httpEntity , String.class );
 
 		if (!response.getStatusCode().equals(HttpStatus.OK)) {
 			throw new RuntimeException(response.getBody());

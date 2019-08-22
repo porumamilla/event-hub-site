@@ -50,7 +50,7 @@
            <span class="navbar-text" th:text="${user.name}"></span>(<span class="navbar-text" th:text="${user.role}"></span>)
          </a>
          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-         	 <a class="dropdown-item" href="#">Change Workspace</a>
+         	 <a class="dropdown-item" href="javascript:showWorkspaces()">Change Workspace</a>
              <a class="dropdown-item" href="#">Profile</a>
              <a class="dropdown-item" href="#">Sign out</a>
          </div>
@@ -197,7 +197,29 @@
 				  $('#contentArea').html(data);
 			});
 		}
-		showEvents();
-	</script>
+		
+		function showWorkspaces() {
+			$('#contentArea').html("<font color='green'>Loading.......</font>");
+			$.get('/manageWorkspaces', function(data) {
+				  $('#contentArea').html(data);
+			});
+		}
+		</script>
+		<script th:inline="javascript">
+		/*<![CDATA[*/
+
+		    var flag = [[${user.defaultWorkspace}]]; 
+		    window.onload = function() {
+		        if(flag == null || flag == '') {
+		        	showWorkspaces(); 
+		        } else {
+		        	showEvents();
+		        }
+		    };
+
+		/*]]>*/
+		</script>
+		
+	
 	</body>
 </html>

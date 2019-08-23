@@ -8,6 +8,7 @@
 /Users/raghu/event-hub-workspace/event-hub-site/src/main/java/com/eventhub/site/form/IntegrationsForm.java
 /Users/raghu/event-hub-workspace/event-hub-site/src/main/java/com/eventhub/site/config/ApiEndPointUri.java
 /Users/raghu/event-hub-workspace/event-hub-site/src/main/java/com/eventhub/site/model/Consumer.java
+/Users/raghu/event-hub-workspace/event-hub-site/src/main/java/com/eventhub/site/model/Event.java
 /Users/raghu/event-hub-workspace/event-hub-site/src/main/java/com/eventhub/site/model/EventDefinition.java
 /Users/raghu/event-hub-workspace/event-hub-site/src/main/java/com/eventhub/site/model/Source.java
 /Users/raghu/event-hub-workspace/event-hub-site/src/main/java/com/eventhub/site/model/Workspace.java

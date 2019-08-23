@@ -20,10 +20,13 @@ com/eventhub/site/model/SourceType.class
 com/eventhub/site/SiteController$6.class
 com/eventhub/site/model/Target.class
 com/eventhub/site/SiteController$16.class
+com/eventhub/site/model/Event.class
+com/eventhub/site/SiteController$19.class
 com/eventhub/site/SiteController$3.class
 com/eventhub/site/SiteController$5.class
 com/eventhub/site/model/Consumer.class
 com/eventhub/site/model/Workspace.class
+com/eventhub/site/SiteController$20.class
 com/eventhub/site/Application.class
 com/eventhub/site/SiteController$18.class
 com/eventhub/site/form/RegistrationForm.class

@@ -28,6 +28,7 @@ import com.eventhub.site.config.ApiEndPointUri;
 import com.eventhub.site.form.IntegrationsForm;
 import com.eventhub.site.form.RegistrationForm;
 import com.eventhub.site.model.Consumer;
+import com.eventhub.site.model.Event;
 import com.eventhub.site.model.EventDefinition;
 import com.eventhub.site.model.Source;
 import com.eventhub.site.model.SourceType;
@@ -49,14 +50,10 @@ public class SiteController {
 	public String index() {
 		return "index";
 	}
+
 	@GetMapping(value = "/events")
 	public String events() {
 		return "events";
-	}
-
-	@GetMapping(value = "/eventHistory")
-	public String eventHistory() {
-		return "eventHistory";
 	}
 
 	@GetMapping(value = "/definitions")
@@ -477,6 +474,38 @@ public class SiteController {
 
 		if (!response.getStatusCode().equals(HttpStatus.OK)) {
 			throw new RuntimeException(response.getBody());
+		}
+	}
+	
+	@GetMapping(value = "/eventHistory")
+	public String eventHistory(Model model, @ModelAttribute("user") User user) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+		List<SourceType> orgSourceTypes = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/organization/sourceTypes?orgId=" + user.getOrgId() +
+				"&workspace=" + user.getDefaultWorkspace(), HttpMethod.GET, null,
+				new ParameterizedTypeReference<List<SourceType>>() {
+				}).getBody();
+		model.addAttribute("orgSourceTypes", orgSourceTypes);
+
+		List<Event> events = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/organization/events?orgId=" + user.getOrgId() + "&workspace=" + user.getDefaultWorkspace(), HttpMethod.GET, null,
+				new ParameterizedTypeReference<List<Event>>() {
+				}).getBody();
+		setSourceType(orgSourceTypes, events);
+		model.addAttribute("events", events);
+
+		return "eventHistory";
+	}
+	
+	private void setSourceType(List<SourceType> orgSourceTypes , List<Event> events) {
+		for (Event event : events) {
+			for (SourceType orgSourceType : orgSourceTypes) {
+				if (orgSourceType.getKey().equals(event.getSourceKey())) {
+					//System.out.println("inside if");
+					event.setSourceName(orgSourceType.getName());
+					break;
+				}
+			}
 		}
 	}
 }

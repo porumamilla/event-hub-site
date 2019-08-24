@@ -43,5 +43,15 @@
 				</div>
 			</div>
 		</div>
+		<script th:inline="javascript">
+		var dayNames = []
+		var dayCounts = []
+		/*<![CDATA[*/
+	    /*[# th:each="entry : ${eventCounts}"]*/
+	    	dayNames.push(/*[[${entry.dayName}]]*/);
+	        dayCounts.push(/*[[${entry.count}]]*/);
+	    /*[/]*/
+		/*]]>*/
 		
+		</script>
 		<script src="/js/dashboard.js"></script>

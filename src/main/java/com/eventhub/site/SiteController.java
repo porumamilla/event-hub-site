@@ -1,7 +1,9 @@
 package com.eventhub.site;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -29,6 +31,7 @@ import com.eventhub.site.form.IntegrationsForm;
 import com.eventhub.site.form.RegistrationForm;
 import com.eventhub.site.model.Consumer;
 import com.eventhub.site.model.Event;
+import com.eventhub.site.model.EventCountsByDay;
 import com.eventhub.site.model.EventDefinition;
 import com.eventhub.site.model.Source;
 import com.eventhub.site.model.SourceType;
@@ -493,7 +496,13 @@ public class SiteController {
 				}).getBody();
 		setSourceType(orgSourceTypes, events);
 		model.addAttribute("events", events);
+		
+		List<EventCountsByDay> eventCounts = restTemplate.exchange(apiEndPointUri.getDaoApiEndpoint() + "/organization/eventCountsForPast7Days?orgId=" + user.getOrgId() + "&workspace=" + user.getDefaultWorkspace(), HttpMethod.GET, null,
+				new ParameterizedTypeReference<List<EventCountsByDay>>() {
+				}).getBody();
 
+		model.addAttribute("eventCounts", eventCounts);
+		
 		return "eventHistory";
 	}
 	

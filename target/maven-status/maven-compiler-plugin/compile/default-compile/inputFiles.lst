@@ -1,4 +1,5 @@
 /Users/raghu/event-hub-workspace/event-hub-site/src/main/java/com/eventhub/site/SiteController.java
+/Users/raghu/event-hub-workspace/event-hub-site/src/main/java/com/eventhub/site/model/EventCountsByDay.java
 /Users/raghu/event-hub-workspace/event-hub-site/src/main/java/com/eventhub/site/model/Target.java
 /Users/raghu/event-hub-workspace/event-hub-site/src/main/java/com/eventhub/site/form/RegistrationForm.java
 /Users/raghu/event-hub-workspace/event-hub-site/src/main/java/com/eventhub/site/model/SourceType.java

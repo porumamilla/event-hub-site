@@ -2,6 +2,8 @@ com/eventhub/site/SiteController$14.class
 com/eventhub/site/SiteController$17.class
 com/eventhub/site/SiteController.class
 com/eventhub/site/SiteController$11.class
+com/eventhub/site/SiteController$21.class
+com/eventhub/site/model/EventCountsByDay.class
 com/eventhub/site/form/IntegrationsForm.class
 com/eventhub/site/model/User.class
 com/eventhub/site/SiteController$8.class

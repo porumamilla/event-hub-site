@@ -18,8 +18,8 @@ spec:
     spec:
       containers:
       - name: event-hub-site
-        image: "gcr.io/event-hub-249001/event-hub-site:0.0.1-SNAPSHOT"
+        image: "gcr.io/event-hub-317019/event-hub-site:0.0.1-SNAPSHOT"
         imagePullPolicy: "Always"
-      env:
-      - name: spring.profiles.active
-        value: gcp
+        env:
+        - name: spring.profiles.active
+          value: gcp

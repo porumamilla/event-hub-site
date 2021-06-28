@@ -4,7 +4,7 @@
 
   <groupId>event-hub</groupId>
   <artifactId>event-hub-site</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>${version}</version>
   <packaging>jar</packaging>
 
   <name>event-hub-site</name>

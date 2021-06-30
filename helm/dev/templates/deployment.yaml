@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: event-hub-site-deployment
+  name: event-hub-site
 spec:
   selector:
     matchLabels:

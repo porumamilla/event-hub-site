@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: event-hub-site
+  name: event-hub-site-canary
   labels:
     app: event-hub-site
 spec:
@@ -10,7 +10,7 @@ spec:
       app: "{{.Values.nameOverride}}"
       tier: frontend
       track: stable
-  replicas: 3
+  replicas: 1
   template:
     metadata:
       labels:

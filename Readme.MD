@@ -28,3 +28,9 @@ helm upgrade --install --set image.tag=3e91cd82-059e-4f21-9a70-983fca43b7e3 --na
 kubectl apply -f galaxy-ingress.yaml --namespace prod
 
 kubectl apply -f nebula-ingress.yaml --namespace prod
+
+## Canary deployment
+### Current version deployment
+helm upgrade --install --namespace dev --set app.name=event-hub-site-dev --set app.version=e73b424e4c6bd0c26cde0a40eb1f93af1f041306 --set image.tag=e73b424e4c6bd0c26cde0a40eb1f93af1f041306 event-hub-site-dev ./helm/dev
+
+helm upgrade --install --namespace dev --set app.name=event-hub-site-canary --set app.version=fcaa501c9d4dee7acde1fe8e51ac82d7dc02ca54 --set image.tag=fcaa501c9d4dee7acde1fe8e51ac82d7dc02ca54 event-hub-site-canary ./helm/canary-deploy

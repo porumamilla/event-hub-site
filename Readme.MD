@@ -17,3 +17,12 @@ mvn clean compile jib:build
 
 ## Deploying to GKE
 kubectl apply -f deployment
+
+## Helm Deployments
+### Plain Vanilla K8S Blue Green Deployment
+#### Deployment to identical prod systems
+helm upgrade --install --set image.tag=3e91cd82-059e-4f21-9a70-983fca43b7e3 --namespace prod event-hub-site-galaxy ./helm/blue-green-deploy/prod-galaxy 
+helm upgrade --install --set image.tag=3e91cd82-059e-4f21-9a70-983fca43b7e3 --namespace prod event-hub-site-nebula ./helm/blue-green-deploy/prod-nebula 
+#### Ingress to switch between two environments
+kubectl apply -f galaxy-ingress.yaml --namespace prod
+kubectl apply -f nebula-ingress.yaml --namespace prod

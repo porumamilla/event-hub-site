@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: event-hub-site-nebula
+spec:
+  selector:
+    matchLabels:
+      app: "{{.Values.nameOverride}}"
+      tier: frontend
+      track: stable
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: "{{.Values.nameOverride}}"
+        tier: frontend
+        track: stable
+    spec:
+      containers:
+      - name: "{{.Values.nameOverride}}"
+        image: "gcr.io/{{ .Values.gcp_project }}/{{.Values.image.name}}:{{.Values.image.tag}}"
+        imagePullPolicy: "Always"
+        env:
+        - name: spring.profiles.active
+          value: gcp

@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: event-hub-global-lb
+spec:
+  defaultBackend:
+    service:
+      name: event-hub-site-galaxy
+      port:
+        number: 80
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: event-hub-site-galaxy
+            port:
+              number: 80

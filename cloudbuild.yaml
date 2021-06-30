@@ -7,10 +7,10 @@ steps:
     export PATH=$$PATH:. &&
     curl -fsSL https://github.com/GoogleCloudPlatform/docker-credential-gcr/releases/download/v1.5.0/docker-credential-gcr_linux_amd64-1.5.0.tar.gz | tar zxv &&
     chmod +x docker-credential-gcr &&
-    mvn -B clean compile -Dversion=$BUILD_ID jib:build -Dmaven.test.skip=true -Ddocker.image.prefix=gcr.io/$PROJECT_ID
+    mvn -B clean compile -Dversion=$REVISION_ID jib:build -Dmaven.test.skip=true -Ddocker.image.prefix=gcr.io/$PROJECT_ID
   
 - name: 'gcr.io/$PROJECT_ID/helm'
-  args: ['upgrade', '--install', '--set', 'image.tag=$BUILD_ID', 'event-hub-site-dev', '--namespace', '$_K8S_NAMESPACE', './helm/dev']
+  args: ['upgrade', '--install', '--set', 'image.tag=$REVISION_ID', 'event-hub-site-dev', '--namespace', '$_K8S_NAMESPACE', './helm/dev']
   env:
   - 'CLOUDSDK_COMPUTE_REGION=us-central1'
   - 'CLOUDSDK_CONTAINER_CLUSTER=$_K8S_NAME'

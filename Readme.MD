@@ -4,7 +4,7 @@ This is a event hub web application(i.e., EventHubSite in the architure diagram)
 ![alt text](Architecture.png)
 
 ## Running in local using Maven
-mvn spring-boot:run -Dspring-boot.run.arguments=--spring.profiles.active=local
+mvn spring-boot:run -Dversion=1.0.0 -Dspring-boot.run.arguments=--spring.profiles.active=local
 
 ## Building docker
  mvn compile jib:dockerBuild

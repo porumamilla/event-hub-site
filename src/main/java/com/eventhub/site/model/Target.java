@@ -1,6 +1,7 @@
 package com.eventhub.site.model;
-
-public class Target {
+import java.io.Serializable;
+public class Target implements Serializable {
+    private static final long serialVersionUID = 1L;
 	private String id;
 	private String name;
 	private String config;

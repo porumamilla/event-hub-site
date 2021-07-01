@@ -1,13 +1,14 @@
 package com.eventhub.site.model;
 
-
-public class SourceType {
+import java.io.Serializable;
+public class SourceType implements Serializable {
+    private static final long serialVersionUID = 1L;
 	private String id;
 	private String name;
 
 	private String type;
 	private String key;
-private String workspace;
+    private String workspace;
 	
 	public String getWorkspace() {
 		return workspace;

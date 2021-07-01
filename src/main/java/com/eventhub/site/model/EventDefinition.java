@@ -1,7 +1,7 @@
 package com.eventhub.site.model;
-
-public class EventDefinition {
-
+import java.io.Serializable;
+public class EventDefinition implements Serializable {
+    private static final long serialVersionUID = 1L;
 	private String id;
 	private String orgId;
 	private String sourceId;

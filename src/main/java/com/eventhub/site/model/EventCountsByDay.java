@@ -1,9 +1,9 @@
 package com.eventhub.site.model;
-
-public class EventCountsByDay {
-
+import java.io.Serializable;
+public class EventCountsByDay implements Serializable {
+    private static final long serialVersionUID = 1L;
 	private String dayName;
-	private Long count = new Long(0);
+	private Long count = 0L;
 	
 	public String getDayName() {
 		return dayName;

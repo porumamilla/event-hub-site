@@ -1,8 +1,9 @@
 package com.eventhub.site.model;
 
 import java.util.Map;
-
-public class Event {
+import java.io.Serializable;
+public class Event implements Serializable {
+    private static final long serialVersionUID = 1L;
 	private String name;
 	private String sourceKey;
 	private String sourceName;

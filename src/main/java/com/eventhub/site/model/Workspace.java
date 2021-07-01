@@ -1,7 +1,7 @@
 package com.eventhub.site.model;
-
-public class Workspace {
-	
+import java.io.Serializable;
+public class Workspace implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private String orgId;
 	private String name;
 	
